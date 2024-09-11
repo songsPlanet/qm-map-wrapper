@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "declaration": true, // 生成.d.ts
+    "outDir": "./dist", // 编译输出目录
+    "sourceMap": true,
+    "strict": true
+  },
+  "include": ["mapboxgl"] // 自己代码目录
+}
