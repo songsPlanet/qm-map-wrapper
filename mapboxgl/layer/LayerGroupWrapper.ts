@@ -4,7 +4,7 @@ import LayerWrapper from './LayerWrapper';
 
 /**
  * 图层组
- * @description 多个图层作为一个对象控制
+ * 43description 多个图层作为一个对象控制
  */
 class LayerGroupWrapper {
   private _options: TLayerGroupOptions;
