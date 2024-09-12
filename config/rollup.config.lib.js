@@ -2,7 +2,6 @@ import path from 'path';
 import chalk from 'chalk';
 import { rollup } from 'rollup';
 import { fileURLToPath } from 'url';
-// import alias from '@rollup/plugin-alias';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
@@ -19,7 +18,6 @@ const inputOptions = {
   plugins: [
     nodeResolve(),
     commonjs(),
-    // alias({ entries: { "@": path.resolve(context, "mapboxgl") } }),
     typescript(),
     babel({
       extensions,

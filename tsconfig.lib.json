@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true,
+    "emitDeclarationOnly": true,
     "strict": true,
     "allowJs": true,
     "checkJs": true,
@@ -7,11 +10,6 @@
     "target": "ESNext",
     "alwaysStrict": true,
     "skipLibCheck": true,
-
-    "outDir": "dist",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "jsx": "react",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "removeComments": false,
@@ -24,11 +22,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["mapboxgl/*"]
-    }
+    "lib": ["DOM", "DOM.Iterable", "ESNext"]
   },
   "include": ["mapboxgl/**/*.ts"]
 }

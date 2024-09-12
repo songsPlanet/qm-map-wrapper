@@ -38,13 +38,10 @@
     "@types/gulp-babel": "^6.1.33",
     "@types/gulp-less": "^0.0.36",
     "@types/gulp-postcss": "^8.0.6",
-    "@vitejs/plugin-legacy": "^5.4.2",
-    "@vitejs/plugin-react": "^4.3.1",
     "babel-loader": "^9.1.3",
     "babel-plugin-import": "^1.13.8",
     "chalk": "^5.3.0",
     "child_process": "^1.0.2",
-    "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.38.1",
     "css-loader": "^7.1.2",
     "fs": "^0.0.1-security",
@@ -54,7 +51,6 @@
     "gulp-cli": "^3.0.0",
     "gulp-less": "^5.0.0",
     "gulp-postcss": "^10.0.0",
-    "html-webpack-plugin": "^5.6.0",
     "immutable": "^4.3.7",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
@@ -65,15 +61,10 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.6.2",
-    "url": "^0.11.4",
-    "vite": "^5.4.3",
-    "vite-plugin-libcss": "^1.1.1",
-    "webpack": "^5.94.0",
-    "yarn": "^1.22.22"
+    "url": "^0.11.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.6",
-    "@types/mapbox-gl": "^3.4.0",
-    "webpack-cli": "^5.1.4"
+    "@types/mapbox-gl": "^3.4.0"
   }
 }
