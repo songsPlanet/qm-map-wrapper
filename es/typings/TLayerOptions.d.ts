@@ -12,6 +12,7 @@ export type TLegendControlOptions = TLegendItemOptions & {
 export type TLayerOptions = AnyLayer & Layer & {
     name: string;
     isAdd?: boolean;
+    isTemporary?: boolean;
     legend?: TLegendControlOptions;
     LayerName?: string;
     dataResolver?: IDataResolver;
@@ -21,6 +22,7 @@ export interface TLayerGroupOptions {
     id: string;
     name: string;
     isAdd?: boolean;
+    isTemporary?: boolean;
     type: 'layerGroup' | 'logicGroup';
     legend?: TLegendControlOptions;
     layers: Array<TLayerOptions | TLayerGroupOptions>;
