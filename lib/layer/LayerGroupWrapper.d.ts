@@ -1,6 +1,6 @@
-import MapWrapper from '../MapWrapper';
 import { type TLayerGroupOptions } from '../typings';
 import LayerWrapper from './LayerWrapper';
+import MapWrapper from '../MapWrapper';
 /**
  * 图层组
  * 43description 多个图层作为一个对象控制

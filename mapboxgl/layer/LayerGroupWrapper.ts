@@ -1,6 +1,6 @@
-import MapWrapper from '../MapWrapper';
 import { type TLayerGroupOptions } from '../typings';
 import LayerWrapper from './LayerWrapper';
+import MapWrapper from '../MapWrapper';
 
 /**
  * 图层组
