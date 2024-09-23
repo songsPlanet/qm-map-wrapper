@@ -20,6 +20,7 @@ export {
     type TLayerSettingOptions,
     type TMapLayerSetting,
 } from './typings/TLayerOptions';
+
 export { type TMapOptions } from './typings/TMapOptions';
 
 
