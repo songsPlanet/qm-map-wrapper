@@ -1,6 +1,6 @@
 {
   "name": "qm-map-wrapper",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "qm-map-wrapper",
   "main": "./lib/index.js",
   "module": "./es/index.js",

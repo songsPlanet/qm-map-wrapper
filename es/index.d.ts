@@ -3,6 +3,7 @@ export { default as LayerWrapper } from './layer/LayerWrapper';
 export { default as BaseLayer } from './layer/BaseLayer';
 export { default as MapWrapper } from './MapWrapper';
 export { default as GISToolHelper } from './GISToolHelper';
+export { default as PolygonUnion } from './convertion/PolygonUnion';
 export { default as PolygonMeasure } from './graphic/PolygonMeasure';
 export { default as PolylineMeasure } from './graphic/PolylineMeasure';
 export { default as AnimationRoute } from './animation/AnimationRoute';
