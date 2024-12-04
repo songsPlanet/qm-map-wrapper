@@ -5,7 +5,6 @@
  * isStyle:         动态样式，默认false，true需使用map.addDashLayer
  * stepPoint?：     通过turf.js重新划分线，会导致轨迹线的折点不真实
  */
-
 import type { GeoJSONSource } from 'mapbox-gl';
 import MapWrapper from '../MapWrapper';
 
@@ -34,7 +33,7 @@ let pointGeojson: any = {
 
 class AnimationRoute {
   private map: MapWrapper;
-  private route: any; // 目标路径geojson
+  private route: any; // 目标路径 Feature<Geometry, Properties>[]
   private pauseIndex: number; // 暂停geometry下标
   private pauseStatus: boolean; // 暂停状
   private interval: number | undefined;
@@ -53,7 +52,7 @@ class AnimationRoute {
   init() {
     
     // 路径
-    this.addRouteLayer();
+    // this.addRouteLayer();
     // 动态点
     this.map.addSource('point', {
       type: 'geojson',
@@ -148,14 +147,16 @@ class AnimationRoute {
       },
     });
     // this.map.locationFeature(this.route);
-    this.map.jumpTo({ center: this.route.features[0].geometry.coordinates[0], zoom: 17 });
+    // this.map.jumpTo({ center: this.route.features[0].geometry.coordinates[0], zoom: 17 });
   }
 
   getIndex() {
     if (pointGeojson.features.length !== 0) {
-      this.pauseIndex = this.route.features[0].geometry.coordinates.findIndex((value: any) => {
-        return value[0] === pointGeojson.features[0].id;
+      this.pauseIndex = this.route.findIndex((value: any) => {
+        return value.geometry.coordinates === pointGeojson.features[0].geometry.coordinates;
       });
+    } else {
+      this.pauseIndex = 0;
     }
   }
 
@@ -172,18 +173,18 @@ class AnimationRoute {
     }
 
     function task(index: any) {
-      const coords = that.route.features[0].geometry.coordinates;
+      const coords = that.route[index].geometry.coordinates
 
-      geojson.features[0].geometry.coordinates.push(coords[index]);
+      geojson.features[0].geometry.coordinates.push(coords);
       pointGeojson = {
         type: 'FeatureCollection',
         features: [
           {
             type: 'Feature',
-            id: coords[index][0],
+            id: that.route[index],
             geometry: {
               type: 'Point',
-              coordinates: coords[index],
+              coordinates: that.route[index].geometry.coordinates,
             },
           },
         ],

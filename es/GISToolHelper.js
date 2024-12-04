@@ -290,6 +290,52 @@ _defineProperty(GISToolHelper, "createPolygonFeatureCollection", function (coord
   };
 });
 /**
+     * polygonToPolygon
+     *  @param multi
+     *  @param polygons
+     * @returns {{}}
+     */
+_defineProperty(GISToolHelper, "multiPolygonToPolygon", function (multi, polygons) {
+  for (var i = 0; i < multi.length; i++) {
+    if (multi[i].length > 1 && multi[i][0].length === 2) {
+      polygons.push(multi[i]);
+    } else {
+      _GISToolHelper.multiPolygonToPolygon(multi[i], polygons);
+    }
+  }
+});
+/**
+   * polygonToPolygon
+   *  @param feats feature[]
+   * @returns {{}}
+   */
+_defineProperty(GISToolHelper, "modifyMultiPolygon", function (feats) {
+  var polygons = [];
+  _forEachInstanceProperty(feats).call(feats, function (feat) {
+    if (feat.geometry.type === 'MultiPolygon') {
+      var flatPolygons = [];
+      _GISToolHelper.multiPolygonToPolygon(feat.geometry.coordinates, flatPolygons);
+      _forEachInstanceProperty(flatPolygons).call(flatPolygons, function (poly) {
+        polygons.push({
+          type: 'Feature',
+          geometry: {
+            coordinates: [poly],
+            type: 'Polygon'
+          },
+          properties: feat.properties
+        });
+      });
+    } else if (feat.geometry.type === 'Polygon') {
+      polygons.push({
+        type: 'Feature',
+        geometry: feat.geometry,
+        properties: feat.properties
+      });
+    }
+  });
+  return polygons;
+});
+/**
  * 创建Point的FeatureCollection
  * @param lonlat 经纬度数组
  * lat: 纬度

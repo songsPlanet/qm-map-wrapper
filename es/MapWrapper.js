@@ -4,6 +4,13 @@ import _Array$from from '@babel/runtime-corejs3/core-js-stable/array/from';
 import _Symbol from '@babel/runtime-corejs3/core-js-stable/symbol';
 import _getIteratorMethod from '@babel/runtime-corejs3/core-js/get-iterator-method';
 import _Array$isArray from '@babel/runtime-corejs3/core-js-stable/array/is-array';
+import _Object$keys from '@babel/runtime-corejs3/core-js-stable/object/keys';
+import _Object$getOwnPropertySymbols from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-symbols';
+import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
+import _Object$getOwnPropertyDescriptor from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor';
+import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors';
+import _Object$defineProperties from '@babel/runtime-corejs3/core-js-stable/object/define-properties';
+import _Object$defineProperty from '@babel/runtime-corejs3/core-js-stable/object/define-property';
 import _classCallCheck from '@babel/runtime-corejs3/helpers/classCallCheck';
 import _createClass from '@babel/runtime-corejs3/helpers/createClass';
 import _possibleConstructorReturn from '@babel/runtime-corejs3/helpers/possibleConstructorReturn';
@@ -20,14 +27,16 @@ import 'core-js/modules/es.regexp.exec.js';
 import 'core-js/modules/es.regexp.test.js';
 import 'core-js/modules/es.regexp.to-string.js';
 import _forEachInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/for-each';
-import _findIndexInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/find-index';
 import _parseInt from '@babel/runtime-corejs3/core-js-stable/parse-int';
+import _findIndexInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/find-index';
 import LayerGroupWrapper from './layer/LayerGroupWrapper.js';
 import LayerWrapper from './layer/LayerWrapper.js';
 import { LngLatBounds, Map } from 'mapbox-gl';
-import GISToolHelper from './GISToolHelper.js';
 import { MapEvent } from './typings/TEvent.js';
+import GISToolHelper from './GISToolHelper.js';
 
+function ownKeys(e, r) { var t = _Object$keys(e); if (_Object$getOwnPropertySymbols) { var o = _Object$getOwnPropertySymbols(e); r && (o = _filterInstanceProperty(o).call(o, function (r) { return _Object$getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var _context4, _context5; var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? _forEachInstanceProperty(_context4 = ownKeys(Object(t), !0)).call(_context4, function (r) { _defineProperty(e, r, t[r]); }) : _Object$getOwnPropertyDescriptors ? _Object$defineProperties(e, _Object$getOwnPropertyDescriptors(t)) : _forEachInstanceProperty(_context5 = ownKeys(Object(t))).call(_context5, function (r) { _Object$defineProperty(e, r, _Object$getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof _Symbol && _getIteratorMethod(r) || r["@@iterator"]; if (!t) { if (_Array$isArray(r) || (t = _unsupportedIterableToArray(r)) || e) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { var _context3; if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = _sliceInstanceProperty(_context3 = {}.toString.call(r)).call(_context3, 8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? _Array$from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
@@ -62,7 +71,7 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
     _defineProperty(_this, "_drawTool", void 0);
     _defineProperty(_this, "_layers", []);
     _defineProperty(_this, "addDotIcon", function (point) {
-      _this.clearSelectById('red-dot');
+      _this.clearSelect('red-dot');
       _this.addSource('red-dot-ds', {
         type: 'geojson',
         data: {
@@ -259,10 +268,10 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
      */
   }, {
     key: "selectFeature",
-    value: function selectFeature(geo, id, color) {
+    value: function selectFeature(geo, id, paint) {
       id ? this.clearSelect(id) : this.clearSelect();
-      var dsId = id ? "".concat(id, "-location-ds") : 'location-ds';
-      var lyrId = id ? "".concat(id, "-location-lyr") : 'location-lyr';
+      var dsId = id ? "".concat(id, "-ds") : 'location-ds';
+      var lyrId = id ? "".concat(id, "-lyr") : 'location-lyr';
       this.addSource(dsId, {
         type: 'geojson',
         data: geo
@@ -270,10 +279,10 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       this.addLayer({
         id: lyrId,
         type: 'line',
-        paint: {
-          'line-color': color !== null && color !== void 0 ? color : '#00ffff',
+        paint: _objectSpread({
+          'line-color': '#00ffff',
           'line-width': 2
-        },
+        }, paint),
         source: dsId
       });
     }
@@ -282,10 +291,10 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
      */
   }, {
     key: "selectCircleFeature",
-    value: function selectCircleFeature(geo, id) {
-      id ? this.clearSelect("".concat(id)) : this.clearSelect();
-      var dsId = id ? "".concat(id, "-location-ds") : 'location-ds';
-      var lyrId = id ? "".concat(id, "-location-lyr") : 'location-lyr';
+    value: function selectCircleFeature(geo, id, paint, filter, beforeId) {
+      var dsId = id ? "".concat(id, "-ds") : 'location-ds';
+      var lyrId = id ? "".concat(id, "-lyr") : 'location-lyr';
+      this.clearFeatureById(dsId, lyrId);
       this.addSource(dsId, {
         type: 'geojson',
         data: geo
@@ -293,15 +302,16 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       this.addLayer({
         id: lyrId,
         type: 'circle',
-        paint: {
+        paint: _objectSpread({
           'circle-color': '#00ffff',
           'circle-radius': 6,
           'circle-opacity': 0.3,
           'circle-stroke-width': 1,
           'circle-stroke-color': '#00ffff'
-        },
-        source: dsId
-      });
+        }, paint),
+        source: dsId,
+        filter: filter ? filter : ['in', '$type', 'Point']
+      }, beforeId);
     }
     /**
      * 要素注记
@@ -311,10 +321,10 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
      */
   }, {
     key: "selectSymbolFeature",
-    value: function selectSymbolFeature(geo, id, color, filter) {
-      this.clearSelect(id);
-      var dsId = "".concat(id, "-location-ds");
-      var lyrId = "".concat(id, "-location-lyr");
+    value: function selectSymbolFeature(geo, id, paint, filter) {
+      var dsId = "".concat(id, "-ds");
+      var lyrId = "".concat(id, "-lyr");
+      this.clearFeatureById(dsId, lyrId);
       this.addSource(dsId, {
         type: 'geojson',
         data: geo
@@ -332,12 +342,12 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
           'text-font': ['Open Sans Regular'],
           'text-variable-anchor': ['top', 'bottom', 'left', 'right']
         },
-        paint: {
-          'text-color': color ? color : '#F320BE',
+        paint: _objectSpread({
+          'text-color': '#F320BE',
           // 玫红
           'text-halo-width': 2,
           'text-halo-color': 'white'
-        },
+        }, paint),
         source: dsId
       });
     }
@@ -345,15 +355,15 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
      * 要素注记-图标
      * @param geo：目标要素geometry{type：Point}
      * @param id：唯一编码
-     * @param color ：可选颜色，默认玫红
-     * @param filter：可选过滤条件：如['concat','保单号:  ',['get', 'policyNo'],'\n','险种:  ',['get', 'seedCodeNames']]
+     * @param icon ：图标名称
+     * @param beforeId
      */
   }, {
     key: "selectSymbolIconFeature",
-    value: function selectSymbolIconFeature(geo, id, icon, filter) {
-      this.clearSelect("".concat(id));
-      var dsId = "".concat(id, "-location-ds");
-      var lyrId = "".concat(id, "-location-lyr");
+    value: function selectSymbolIconFeature(geo, id, icon, beforeId) {
+      var dsId = "".concat(id, "-ds");
+      var lyrId = "".concat(id, "-lyr");
+      this.clearFeatureById(dsId, lyrId);
       this.addSource(dsId, {
         type: 'geojson',
         data: geo
@@ -361,13 +371,8 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       this.addLayer({
         id: lyrId,
         type: 'symbol',
-        minzoom: 0,
         layout: {
           'icon-image': icon,
-          'text-field': filter ? filter : '',
-          'text-font': ['Open Sans Regular'],
-          'text-allow-overlap': true,
-          'text-ignore-placement': true,
           'icon-allow-overlap': true,
           'icon-ignore-placement': true
         },
@@ -377,28 +382,131 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
           'text-halo-color': 'white'
         },
         source: dsId
+      }, beforeId);
+    }
+    /**
+     * 矢量切片服务
+     * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
+     * @param sourceName：数据源名称
+     * @param id：唯一编码
+     * @param paint ：可选样式
+     * @param beofreId
+     */
+  }, {
+    key: "selectLineFeatureByServer",
+    value: function selectLineFeatureByServer(tiles, sourceName, id, paint, beofreId) {
+      var dsId = "".concat(id, "-ds");
+      var lyrId = "".concat(id, "-lyr");
+      this.clearFeatureById(dsId, lyrId);
+      this.addSource(dsId, {
+        type: 'vector',
+        maxzoom: 14,
+        tiles: tiles
       });
+      this.addLayer({
+        id: lyrId,
+        type: 'line',
+        paint: _objectSpread({
+          'line-color': '#00ffff',
+          'line-width': 2
+        }, paint),
+        source: dsId,
+        'source-layer': "public.".concat(sourceName)
+      }, beofreId);
+    }
+    /**
+    * 矢量切片服务
+    * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
+    * @param sourceName：数据源名称
+    * @param id：唯一编码
+    * @param paint ：可选样式
+    * @param beofreId
+    */
+  }, {
+    key: "selectFillFeatureByServer",
+    value: function selectFillFeatureByServer(tiles, sourceName, id, paint, beofreId) {
+      var dsId = "".concat(id, "-ds");
+      var lyrId = "".concat(id, "-lyr");
+      this.clearFeatureById(dsId, lyrId);
+      this.addSource(dsId, {
+        type: 'vector',
+        minzoom: 0,
+        maxzoom: 12,
+        tiles: tiles
+      });
+      this.addLayer({
+        id: lyrId,
+        type: 'fill',
+        paint: paint,
+        source: dsId,
+        'source-layer': "public.".concat(sourceName)
+      }, beofreId);
     }
   }, {
-    key: "clearSelect",
-    value: function clearSelect(id) {
-      var dsId = id ? "".concat(id, "-location-ds") : 'location-ds';
-      var lyrId = id ? "".concat(id, "-location-lyr") : 'location-lyr';
-      var flag = this.getLayer(lyrId);
-      if (flag) {
-        this.removeLayer(lyrId);
-        this.removeSource(dsId);
-      }
+    key: "addDashLayer",
+    value:
+    /**
+    * 给线矢量添加动态效果
+    * @param sourceid 线矢量sourceid
+    */
+    function addDashLayer(sourceid) {
+      var that = this;
+      this.addLayer({
+        id: 'line-dashed',
+        type: 'line',
+        source: sourceid,
+        paint: {
+          'line-color': '#3FB2BF',
+          'line-width': 3,
+          'line-dasharray': [0, 4, 3]
+        }
+      });
+      var dashArraySequence = [[0, 4, 3], [0.5, 4, 2.5], [1, 4, 2], [1.5, 4, 1.5], [2, 4, 1], [2.5, 4, 0.5], [3, 4, 0], [0, 0.5, 3, 3.5], [0, 1, 3, 3], [0, 1.5, 3, 2.5], [0, 2, 3, 2], [0, 2.5, 3, 1.5], [0, 3, 3, 1], [0, 3.5, 3, 0.5]];
+      var step = 0;
+      var _animateDashArray = function animateDashArray(timestamp) {
+        var newStep = _parseInt(timestamp / 80 % dashArraySequence.length);
+        if (newStep !== step) {
+          that.setPaintProperty('line-dashed', 'line-dasharray', dashArraySequence[step]);
+          step = newStep;
+        }
+        // Request the next frame of the animation.
+        requestAnimationFrame(_animateDashArray);
+      };
+      _animateDashArray(0);
+    }
+    /**
+    * 添加绘制图层
+    *  @param data feature[]
+    */
+  }, {
+    key: "addDrawFeature",
+    value: function addDrawFeature(data) {
+      var _this4 = this;
+      if (data.length === 0) return;
+      var modifyPolygon = GISToolHelper.modifyMultiPolygon(data);
+      _forEachInstanceProperty(modifyPolygon).call(modifyPolygon, function (d) {
+        var _this4$drawTool;
+        (_this4$drawTool = _this4.drawTool) === null || _this4$drawTool === void 0 || _this4$drawTool.add(d);
+      });
     }
     /**
      * 清理图层
      * @param id：唯一编码
      */
   }, {
-    key: "clearSelectById",
-    value: function clearSelectById(id) {
-      var dsId = "".concat(id, "-ds");
-      var lyrId = "".concat(id, "-lyr");
+    key: "clearSelect",
+    value: function clearSelect(id) {
+      var dsId = id ? "".concat(id, "-ds") : 'location-ds';
+      var lyrId = id ? "".concat(id, "-lyr") : 'location-lyr';
+      var flag = this.getLayer(lyrId);
+      if (flag) {
+        this.removeLayer(lyrId);
+        this.removeSource(dsId);
+      }
+    }
+  }, {
+    key: "clearFeatureById",
+    value: function clearFeatureById(dsId, lyrId) {
       var flag = this.getLayer(lyrId);
       if (flag) {
         this.removeLayer(lyrId);
@@ -406,11 +514,55 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       }
     }
     /**
-     * 查找有效beforeId
+      * 单个要素地图定位
+      */
+  }, {
+    key: "locationFeature",
+    value: function locationFeature(featCol) {
+      var _context;
+      var bds = new LngLatBounds();
+      _forEachInstanceProperty(_context = featCol.features).call(_context, function (d) {
+        bds.extend(GISToolHelper.getFeatureBoundingBox(d));
+      });
+      this.fitBounds(bds, {
+        maxZoom: 16
+      });
+    }
+    /**
+     * 多个要素的地图定位
      */
   }, {
+    key: "locationFeatures",
+    value: function locationFeatures(featCols) {
+      var bds = new LngLatBounds();
+      _forEachInstanceProperty(featCols).call(featCols, function (featCol) {
+        var _context2;
+        _forEachInstanceProperty(_context2 = featCol.features).call(_context2, function (d) {
+          bds.extend(GISToolHelper.getFeatureBoundingBox(d));
+        });
+      });
+      this.fitBounds(bds, {
+        maxZoom: 16
+      });
+    }
+    /**
+    * 经纬度地图定位
+    */
+  }, {
+    key: "locationFeatureByCoords",
+    value: function locationFeatureByCoords(lonlat) {
+      var bounds = new LngLatBounds(lonlat[0], lonlat[1]);
+      this.fitBounds(bounds, {
+        maxZoom: 16.5
+      });
+    }
+  }, {
     key: "findValidBeforeId",
-    value: function findValidBeforeId(layerId) {
+    value:
+    /**
+     * 查找有效beforeId
+     */
+    function findValidBeforeId(layerId) {
       var lyrList = this.getLayerList();
       var layerIndex = _findIndexInstanceProperty(lyrList).call(lyrList, function (d) {
         return d.options.id === layerId;
@@ -445,70 +597,6 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
         map: this
       });
       this.remove();
-    }
-    /**
-     * 单个要素地图定位
-     */
-  }, {
-    key: "locationFeature",
-    value: function locationFeature(featCol) {
-      var _context;
-      var bds = new LngLatBounds();
-      _forEachInstanceProperty(_context = featCol.features).call(_context, function (d) {
-        bds.extend(GISToolHelper.getFeatureBoundingBox(d));
-      });
-      this.fitBounds(bds, {
-        maxZoom: 16
-      });
-    }
-    /**
-     * 多个要素的地图定位
-     */
-  }, {
-    key: "locationFeatures",
-    value: function locationFeatures(featCols) {
-      var bds = new LngLatBounds();
-      _forEachInstanceProperty(featCols).call(featCols, function (featCol) {
-        var _context2;
-        _forEachInstanceProperty(_context2 = featCol.features).call(_context2, function (d) {
-          bds.extend(GISToolHelper.getFeatureBoundingBox(d));
-        });
-      });
-      this.fitBounds(bds, {
-        maxZoom: 16
-      });
-    }
-  }, {
-    key: "addDashLayer",
-    value:
-    /**
-     * 给线矢量添加动态效果
-     * @param sourceid 线矢量sourceid
-     */
-    function addDashLayer(sourceid) {
-      var that = this;
-      this.addLayer({
-        id: 'line-dashed',
-        type: 'line',
-        source: sourceid,
-        paint: {
-          'line-color': '#3FB2BF',
-          'line-width': 3,
-          'line-dasharray': [0, 4, 3]
-        }
-      });
-      var dashArraySequence = [[0, 4, 3], [0.5, 4, 2.5], [1, 4, 2], [1.5, 4, 1.5], [2, 4, 1], [2.5, 4, 0.5], [3, 4, 0], [0, 0.5, 3, 3.5], [0, 1, 3, 3], [0, 1.5, 3, 2.5], [0, 2, 3, 2], [0, 2.5, 3, 1.5], [0, 3, 3, 1], [0, 3.5, 3, 0.5]];
-      var step = 0;
-      var _animateDashArray = function animateDashArray(timestamp) {
-        var newStep = _parseInt(timestamp / 80 % dashArraySequence.length);
-        if (newStep !== step) {
-          that.setPaintProperty('line-dashed', 'line-dasharray', dashArraySequence[step]);
-          step = newStep;
-        }
-        // Request the next frame of the animation.
-        requestAnimationFrame(_animateDashArray);
-      };
-      _animateDashArray(0);
     }
   }]);
 }(Map);

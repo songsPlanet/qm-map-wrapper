@@ -243,6 +243,7 @@ class GISToolHelper {
         return [lon1 + this.deg(L), this.deg(lat2)];
     };
 
+
     /**
      * 度换成弧度
      * @param  {number} d 度
@@ -259,6 +260,9 @@ class GISToolHelper {
     public static deg = (x: number) => {
         return (x * 180) / Math.PI;
     };
+
+
+
 
     /**
      *创建Polygon的geojson 数据
@@ -279,6 +283,54 @@ class GISToolHelper {
                 },
             ],
         };
+    };
+
+    /**
+         * polygonToPolygon 
+         *  @param multi
+         *  @param polygons
+         * @returns {{}}
+         */
+    public static multiPolygonToPolygon = (multi: any[], polygons: number[][][]) => {
+        for (let i = 0; i < multi.length; i++) {
+            if (multi[i].length > 1 && multi[i][0].length === 2) {
+                polygons.push(multi[i]);
+            } else {
+                this.multiPolygonToPolygon(multi[i], polygons);
+            }
+        }
+    };
+
+    /**
+       * polygonToPolygon 
+       *  @param feats feature[]
+       * @returns {{}}
+       */
+    public static modifyMultiPolygon = (feats: any[]) => {
+        const polygons: any[] = [];
+        feats.forEach((feat: any) => {
+            if (feat.geometry.type === 'MultiPolygon') {
+                const flatPolygons: number[][][] = [];
+                this.multiPolygonToPolygon(feat.geometry.coordinates, flatPolygons);
+                flatPolygons.forEach((poly: number[][]) => {
+                    polygons.push({
+                        type: 'Feature',
+                        geometry: {
+                            coordinates: [poly],
+                            type: 'Polygon',
+                        },
+                        properties: feat.properties,
+                    });
+                });
+            } else if (feat.geometry.type === 'Polygon') {
+                polygons.push({
+                    type: 'Feature',
+                    geometry: feat.geometry,
+                    properties: feat.properties,
+                });
+            }
+        });
+        return polygons;
     };
 
     /**
@@ -340,6 +392,7 @@ class GISToolHelper {
         }
         return tiles
     };
+
 
 }
 

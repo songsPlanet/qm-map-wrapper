@@ -99,6 +99,19 @@ declare class GISToolHelper {
         }[];
     };
     /**
+         * polygonToPolygon
+         *  @param multi
+         *  @param polygons
+         * @returns {{}}
+         */
+    static multiPolygonToPolygon: (multi: any[], polygons: number[][][]) => void;
+    /**
+       * polygonToPolygon
+       *  @param feats feature[]
+       * @returns {{}}
+       */
+    static modifyMultiPolygon: (feats: any[]) => any[];
+    /**
      * 创建Point的FeatureCollection
      * @param lonlat 经纬度数组
      * lat: 纬度

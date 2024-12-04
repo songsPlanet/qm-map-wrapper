@@ -2,6 +2,7 @@ import type { TMapLayerSetting } from './typings/TLayerOptions';
 import LayerGroupWrapper from './layer/LayerGroupWrapper';
 import type { StyleFunction, Expression } from 'mapbox-gl';
 import type { TMapOptions } from './typings/TMapOptions';
+import { Feature, FeatureCollection } from 'geojson';
 import LayerWrapper from './layer/LayerWrapper';
 import { Map, LngLatBounds } from 'mapbox-gl';
 /**
@@ -57,33 +58,83 @@ declare class MapWrapper extends Map {
     /**
      * 高亮要素-面/线
      */
-    selectFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string, id?: string, color?: string): void;
+    selectFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string, id?: string, paint?: any): void;
     /**
      * 高亮要素-点
      */
-    selectCircleFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry>, id?: string): void;
+    selectCircleFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry>, id?: string, paint?: any, filter?: any, beforeId?: string): void;
     /**
      * 要素注记
      * geo：目标要素geometry
      * id：指定id，区分与一般高亮要素
      * filter：标注过滤条件：如['concat','保单号:  ',['get', 'policyNo'],'\n','险种:  ',['get', 'seedCodeNames']]
      */
-    selectSymbolFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string, id: string, color?: string, filter?: string | StyleFunction | Expression | undefined): void;
+    selectSymbolFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string, id: string, paint?: any, filter?: string | StyleFunction | Expression | undefined): void;
     /**
      * 要素注记-图标
      * @param geo：目标要素geometry{type：Point}
      * @param id：唯一编码
-     * @param color ：可选颜色，默认玫红
-     * @param filter：可选过滤条件：如['concat','保单号:  ',['get', 'policyNo'],'\n','险种:  ',['get', 'seedCodeNames']]
+     * @param icon ：图标名称
+     * @param beforeId
      */
-    selectSymbolIconFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string, id: string, icon: string, filter?: string | StyleFunction | Expression | undefined): void;
+    selectSymbolIconFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string, id: string, icon: string, beforeId?: string): void;
+    /**
+     * 矢量切片服务
+     * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
+     * @param sourceName：数据源名称
+     * @param id：唯一编码
+     * @param paint ：可选样式
+     * @param beofreId
+     */
+    selectLineFeatureByServer(tiles: string[], sourceName: string, id: string, paint?: any, beofreId?: string): void;
+    /**
+   * 矢量切片服务
+   * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
+   * @param sourceName：数据源名称
+   * @param id：唯一编码
+   * @param paint ：可选样式
+   * @param beofreId
+   */
+    selectFillFeatureByServer(tiles: string[], sourceName: string, id: string, paint?: any, beofreId?: string): void;
     addDotIcon: (point: []) => void;
-    clearSelect(id?: string): void;
+    /**
+    * 给线矢量添加动态效果
+    * @param sourceid 线矢量sourceid
+    */
+    addDashLayer(sourceid: string): void;
+    /**
+   * 添加绘制图层
+   *  @param data feature[]
+   */
+    addDrawFeature(data: Feature[]): void;
     /**
      * 清理图层
      * @param id：唯一编码
      */
-    clearSelectById(id: string): void;
+    clearSelect(id?: string): void;
+    clearFeatureById(dsId: string, lyrId: string): void;
+    /**
+      * 单个要素地图定位
+      */
+    locationFeature(featCol: FeatureCollection): void;
+    /**
+     * 多个要素的地图定位
+     */
+    locationFeatures(featCols: FeatureCollection[]): void;
+    /**
+   * 经纬度地图定位
+   */
+    locationFeatureByCoords(lonlat: any[]): void;
+    /**
+     * 获取地图四至：
+     * @returns {[[*, *], [*, *], [*, *], [*, *]]}
+     */
+    getMapExtent: () => number[][];
+    /**
+     * 获取lnglatBounds四至：
+     * @returns {[[*, *], [*, *], [*, *], [*, *]]}
+     */
+    getBoundsExtent: (bounds: LngLatBounds) => number[][];
     /**
      * 查找有效beforeId
      */
@@ -96,28 +147,5 @@ declare class MapWrapper extends Map {
      * 地图销毁
      */
     destory(): void;
-    /**
-     * 单个要素地图定位
-     */
-    locationFeature(featCol: any): void;
-    /**
-     * 多个要素的地图定位
-     */
-    locationFeatures(featCols: any[]): void;
-    /**
-     * 获取地图四至：
-     * @returns {[[*, *], [*, *], [*, *], [*, *]]}
-     */
-    getMapExtent: () => number[][];
-    /**
-     * 获取lnglatBounds四至：
-     * @returns {[[*, *], [*, *], [*, *], [*, *]]}
-     */
-    getBoundsExtent: (bounds: LngLatBounds) => number[][];
-    /**
-     * 给线矢量添加动态效果
-     * @param sourceid 线矢量sourceid
-     */
-    addDashLayer(sourceid: string): void;
 }
 export default MapWrapper;
