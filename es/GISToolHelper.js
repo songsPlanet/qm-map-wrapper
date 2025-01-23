@@ -150,11 +150,11 @@ _defineProperty(GISToolHelper, "getFeatureBoundingBox", function (feature) {
   return bounds;
 });
 /**
-* 16位转换为rgba
-* @param color
-* @param opacity
-* @returns {string}
-* @private
+ * 16位转换为rgba
+ * @param color
+ * @param opacity
+ * @returns {string}
+ * @private
 */
 _defineProperty(GISToolHelper, "convertHexToRGB", function (color) {
   var _context, _context2, _context3;
@@ -294,7 +294,7 @@ _defineProperty(GISToolHelper, "createPolygonFeatureCollection", function (coord
      *  @param multi
      *  @param polygons
      * @returns {{}}
-     */
+*/
 _defineProperty(GISToolHelper, "multiPolygonToPolygon", function (multi, polygons) {
   for (var i = 0; i < multi.length; i++) {
     if (multi[i].length > 1 && multi[i][0].length === 2) {
@@ -305,10 +305,10 @@ _defineProperty(GISToolHelper, "multiPolygonToPolygon", function (multi, polygon
   }
 });
 /**
-   * polygonToPolygon
-   *  @param feats feature[]
-   * @returns {{}}
-   */
+ * polygonToPolygon
+ *  @param feats feature[]
+ * @returns {{}}
+*/
 _defineProperty(GISToolHelper, "modifyMultiPolygon", function (feats) {
   var polygons = [];
   _forEachInstanceProperty(feats).call(feats, function (feat) {
@@ -373,8 +373,8 @@ _defineProperty(GISToolHelper, "createLineFeatureCollection", function (coords, 
   };
 });
 /**
-*十进制转度分秒
-* @returns {{}}
+ *十进制转度分秒
+ * @returns {{}}
 */
 _defineProperty(GISToolHelper, "getTdtSubDomain", function (tianditukey) {
   var _context4, _context5;

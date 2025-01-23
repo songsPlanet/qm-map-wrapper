@@ -1,4 +1,4 @@
-import type { TMapLayerSetting } from './typings/TLayerOptions';
+import type { TLayerSettingOptions, TMapLayerSetting } from './typings/TLayerOptions';
 import LayerGroupWrapper from './layer/LayerGroupWrapper';
 import type { StyleFunction, Expression } from 'mapbox-gl';
 import type { TMapOptions } from './typings/TMapOptions';
@@ -51,10 +51,11 @@ declare class MapWrapper extends Map {
     getLayerWrapper(layers: Array<LayerWrapper | LayerGroupWrapper>, id: string): LayerWrapper | LayerGroupWrapper | undefined;
     addLayerWrapper(layer: LayerWrapper | LayerGroupWrapper, beforeId?: string): void;
     removeLayerWrapper(layer: LayerWrapper | LayerGroupWrapper, removeSource?: boolean): void;
+    defineLayerWrapper(layerOption: TLayerSettingOptions): LayerWrapper | LayerGroupWrapper;
     /**
      * 添加临时图层-和图层关联
      */
-    addTemporaryWrapper(mapLayerSettting: TMapLayerSetting): void;
+    addTemporaryWrapper(mapLayerSettting: TMapLayerSetting, beforeId?: string): void;
     /**
      * 高亮要素-面/线
      */
@@ -64,7 +65,7 @@ declare class MapWrapper extends Map {
      */
     selectCircleFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry>, id?: string, paint?: any, filter?: any, beforeId?: string): void;
     /**
-     * 要素注记
+     * 要素注记-文字
      * geo：目标要素geometry
      * id：指定id，区分与一般高亮要素
      * filter：标注过滤条件：如['concat','保单号:  ',['get', 'policyNo'],'\n','险种:  ',['get', 'seedCodeNames']]
@@ -79,34 +80,16 @@ declare class MapWrapper extends Map {
      */
     selectSymbolIconFeature(geo: GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string, id: string, icon: string, beforeId?: string): void;
     /**
-     * 矢量切片服务
-     * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
-     * @param sourceName：数据源名称
-     * @param id：唯一编码
-     * @param paint ：可选样式
-     * @param beofreId
-     */
-    selectLineFeatureByServer(tiles: string[], sourceName: string, id: string, paint?: any, beofreId?: string): void;
-    /**
-   * 矢量切片服务
-   * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
-   * @param sourceName：数据源名称
-   * @param id：唯一编码
-   * @param paint ：可选样式
-   * @param beofreId
+   * 添加绘制图层
+   *  @param data feature[]
    */
-    selectFillFeatureByServer(tiles: string[], sourceName: string, id: string, paint?: any, beofreId?: string): void;
+    addDrawFeature(data: Feature[]): void;
     addDotIcon: (point: []) => void;
     /**
     * 给线矢量添加动态效果
     * @param sourceid 线矢量sourceid
     */
     addDashLayer(sourceid: string): void;
-    /**
-   * 添加绘制图层
-   *  @param data feature[]
-   */
-    addDrawFeature(data: Feature[]): void;
     /**
      * 清理图层
      * @param id：唯一编码

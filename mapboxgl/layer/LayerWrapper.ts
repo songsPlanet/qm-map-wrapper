@@ -1,4 +1,4 @@
-import { type VectorSource } from 'mapbox-gl';
+import { GeoJSONSource, type VectorSource } from 'mapbox-gl';
 import { type TLayerOptions } from '../typings';
 import MapWrapper from '../MapWrapper';
 import BaseLayer from './BaseLayer';
@@ -14,7 +14,7 @@ class LayerWrapper extends BaseLayer {
   }
 
   protected add(map: MapWrapper, beforeId?: string) {
-    const { id, source, canUpdate } = this._options as TLayerOptions;
+    const { id, source, canUpdate, dataResolver } = this._options as TLayerOptions;
     let sourceId = this._options.id + '-ds';
     // 直接传id
     if (typeof source === 'string') {
@@ -33,6 +33,9 @@ class LayerWrapper extends BaseLayer {
     // add layer
     const oldLayer = map.getLayer(id);
     const newSource = map.getSource(sourceId);
+    if (dataResolver) {
+      dataResolver.load(newSource as GeoJSONSource)
+    }
     if (!oldLayer && newSource) {
       const layerOptions = { ...(this._options as TLayerOptions), source: sourceId };
       map.addLayer(layerOptions, beforeId);

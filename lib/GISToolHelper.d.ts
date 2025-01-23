@@ -1,11 +1,11 @@
 import { LngLatBounds } from 'mapbox-gl';
 declare class GISToolHelper {
     /**
- * 浅比较
- * @param obj1
- * @param obj2
- * @returns ture or false
- */
+  * 浅比较
+  * @param obj1
+  * @param obj2
+  * @returns ture or false
+  */
     static shollawEqual: (obj1: any, obj2: any) => boolean;
     /**
      * 深比较
@@ -15,22 +15,22 @@ declare class GISToolHelper {
      */
     static deepEqual: (obj1: Object, obj2: Object) => boolean;
     /**
- * 防抖
- * @param func：需要防抖处理的函数
- * @param delay：时间间隔
- */
+  * 防抖
+  * @param func：需要防抖处理的函数
+  * @param delay：时间间隔
+  */
     static debounce: <T extends object>(func: Function, delay: number) => (args: T) => void;
     /**
- * 节流
- * @param func
- * @param delay
- */
+  * 节流
+  * @param func
+  * @param delay
+  */
     static throttle: <T extends object>(func: Function, delay: number) => (args: T) => void;
     /**
- * 转换树形数据为数组
- *  @param {*} list
- *  @param {*} tree
- */
+  * 转换树形数据为数组
+  *  @param {*} list
+  *  @param {*} tree
+  */
     static transTreeToArr: (list: any[], tree: any) => void;
     static loopBounds: (bound: LngLatBounds, coordinates: any) => void;
     /**
@@ -39,25 +39,25 @@ declare class GISToolHelper {
      */
     static getFeatureBoundingBox: (feature: any) => LngLatBounds;
     /**
- * 16位转换为rgba
- * @param color
- * @param opacity
- * @returns {string}
- * @private
- */
+     * 16位转换为rgba
+     * @param color
+     * @param opacity
+     * @returns {string}
+     * @private
+    */
     static convertHexToRGB: (color: any, opacity?: number) => string;
     /**
-* 16位转换为rgba
-* @param color
-* @param opacity
-* @returns {string}
-* @private
-*/
+  * 16位转换为rgba
+  * @param color
+  * @param opacity
+  * @returns {string}
+  * @private
+  */
     static unique: (arr: any[], uniId: string) => any[];
     /**
- *十进制转度分秒
- * @returns {{}}
- */
+  *十进制转度分秒
+  * @returns {{}}
+  */
     static decimalToDms: (decimal: any) => {
         degrees: number;
         minutes: number;
@@ -103,13 +103,13 @@ declare class GISToolHelper {
          *  @param multi
          *  @param polygons
          * @returns {{}}
-         */
+    */
     static multiPolygonToPolygon: (multi: any[], polygons: number[][][]) => void;
     /**
-       * polygonToPolygon
-       *  @param feats feature[]
-       * @returns {{}}
-       */
+     * polygonToPolygon
+     *  @param feats feature[]
+     * @returns {{}}
+    */
     static modifyMultiPolygon: (feats: any[]) => any[];
     /**
      * 创建Point的FeatureCollection
@@ -117,7 +117,7 @@ declare class GISToolHelper {
      * lat: 纬度
      * @returns {{}}
      */
-    static createPointFeatureCollection: (lonlat: number[], prop: any) => {
+    static createPointFeatureCollection: (lonlat: number[], prop?: any) => {
         type: string;
         features: {
             type: string;
@@ -133,7 +133,7 @@ declare class GISToolHelper {
      * coordinates ：[[],[],...]
      * @returns {{}}
      */
-    static createLineFeatureCollection: (coords: any, prop: any) => {
+    static createLineFeatureCollection: (coords: any, prop?: any) => {
         type: string;
         features: {
             type: string;
@@ -145,9 +145,9 @@ declare class GISToolHelper {
         }[];
     };
     /**
-*十进制转度分秒
-* @returns {{}}
-*/
+     *十进制转度分秒
+     * @returns {{}}
+    */
     static getTdtSubDomain: (tianditukey: string) => any;
 }
 export default GISToolHelper;

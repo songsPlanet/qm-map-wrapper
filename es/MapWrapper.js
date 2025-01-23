@@ -184,12 +184,7 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       var _this2 = this;
       this._mapLayerSetting = mapLayerSetting;
       _forEachInstanceProperty(mapLayerSetting).call(mapLayerSetting, function (layerOption) {
-        var lyrWrapper;
-        if ('layers' in layerOption) {
-          lyrWrapper = new LayerGroupWrapper(layerOption);
-        } else {
-          lyrWrapper = new LayerWrapper(layerOption);
-        }
+        var lyrWrapper = _this2.defineLayerWrapper(layerOption);
         _this2.addLayerWrapper(lyrWrapper);
         _this2._layers.push(lyrWrapper);
       });
@@ -238,28 +233,38 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
         layer: layer
       });
     }
+  }, {
+    key: "defineLayerWrapper",
+    value: function defineLayerWrapper(layerOption) {
+      var lyrWrapper;
+      if ('layers' in layerOption) {
+        lyrWrapper = new LayerGroupWrapper(layerOption);
+      } else {
+        lyrWrapper = new LayerWrapper(layerOption);
+      }
+      return lyrWrapper;
+    }
     /**
      * 添加临时图层-和图层关联
      */
   }, {
     key: "addTemporaryWrapper",
-    value: function addTemporaryWrapper(mapLayerSettting) {
+    value: function addTemporaryWrapper(mapLayerSettting, beforeId) {
       var _this3 = this;
       _forEachInstanceProperty(mapLayerSettting).call(mapLayerSettting, function (layerOption) {
-        var lyrWrapper;
-        if ('layers' in layerOption) {
-          lyrWrapper = new LayerGroupWrapper(layerOption);
-        } else {
-          lyrWrapper = new LayerWrapper(layerOption);
+        var existingLayer = _this3.getLayerWrapper(_this3.layers, layerOption.id);
+        if (existingLayer) {
+          _this3.removeLayerWrapper(existingLayer, true);
         }
-        var flag = _this3.getLayer(layerOption.id);
-        if (flag) {
-          // remove layer
-          _this3.removeLayer(layerOption.id);
-          _this3.removeSource(layerOption.id + '-ds');
-          _this3.layers.pop();
-        }
-        _this3.addLayerWrapper(lyrWrapper);
+        // const flag = this.getLayer(layerOption.id)
+        // if (flag) {
+        //   // remove layer
+        //   this.removeLayer(layerOption.id)
+        //   this.removeSource(layerOption.id + '-ds')
+        //   this.layers.pop()
+        // }
+        var lyrWrapper = _this3.defineLayerWrapper(layerOption);
+        _this3.addLayerWrapper(lyrWrapper, beforeId);
         _this3.layers.push(lyrWrapper);
       });
     }
@@ -314,7 +319,7 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       }, beforeId);
     }
     /**
-     * 要素注记
+     * 要素注记-文字
      * geo：目标要素geometry
      * id：指定id，区分与一般高亮要素
      * filter：标注过滤条件：如['concat','保单号:  ',['get', 'policyNo'],'\n','险种:  ',['get', 'seedCodeNames']]
@@ -332,7 +337,6 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       this.addLayer({
         id: lyrId,
         type: 'symbol',
-        minzoom: 10,
         layout: {
           'text-size': 14,
           'text-field': filter !== null && filter !== void 0 ? filter : 'test',
@@ -385,62 +389,19 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
       }, beforeId);
     }
     /**
-     * 矢量切片服务
-     * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
-     * @param sourceName：数据源名称
-     * @param id：唯一编码
-     * @param paint ：可选样式
-     * @param beofreId
-     */
-  }, {
-    key: "selectLineFeatureByServer",
-    value: function selectLineFeatureByServer(tiles, sourceName, id, paint, beofreId) {
-      var dsId = "".concat(id, "-ds");
-      var lyrId = "".concat(id, "-lyr");
-      this.clearFeatureById(dsId, lyrId);
-      this.addSource(dsId, {
-        type: 'vector',
-        maxzoom: 14,
-        tiles: tiles
-      });
-      this.addLayer({
-        id: lyrId,
-        type: 'line',
-        paint: _objectSpread({
-          'line-color': '#00ffff',
-          'line-width': 2
-        }, paint),
-        source: dsId,
-        'source-layer': "public.".concat(sourceName)
-      }, beofreId);
-    }
-    /**
-    * 矢量切片服务
-    * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
-    * @param sourceName：数据源名称
-    * @param id：唯一编码
-    * @param paint ：可选样式
-    * @param beofreId
+    * 添加绘制图层
+    *  @param data feature[]
     */
   }, {
-    key: "selectFillFeatureByServer",
-    value: function selectFillFeatureByServer(tiles, sourceName, id, paint, beofreId) {
-      var dsId = "".concat(id, "-ds");
-      var lyrId = "".concat(id, "-lyr");
-      this.clearFeatureById(dsId, lyrId);
-      this.addSource(dsId, {
-        type: 'vector',
-        minzoom: 0,
-        maxzoom: 12,
-        tiles: tiles
+    key: "addDrawFeature",
+    value: function addDrawFeature(data) {
+      var _this4 = this;
+      if (data.length === 0) return;
+      var modifyPolygon = GISToolHelper.modifyMultiPolygon(data);
+      _forEachInstanceProperty(modifyPolygon).call(modifyPolygon, function (d) {
+        var _this4$drawTool;
+        (_this4$drawTool = _this4.drawTool) === null || _this4$drawTool === void 0 || _this4$drawTool.add(d);
       });
-      this.addLayer({
-        id: lyrId,
-        type: 'fill',
-        paint: paint,
-        source: dsId,
-        'source-layer': "public.".concat(sourceName)
-      }, beofreId);
     }
   }, {
     key: "addDashLayer",
@@ -473,21 +434,6 @@ var MapWrapper = /*#__PURE__*/function (_Map) {
         requestAnimationFrame(_animateDashArray);
       };
       _animateDashArray(0);
-    }
-    /**
-    * 添加绘制图层
-    *  @param data feature[]
-    */
-  }, {
-    key: "addDrawFeature",
-    value: function addDrawFeature(data) {
-      var _this4 = this;
-      if (data.length === 0) return;
-      var modifyPolygon = GISToolHelper.modifyMultiPolygon(data);
-      _forEachInstanceProperty(modifyPolygon).call(modifyPolygon, function (d) {
-        var _this4$drawTool;
-        (_this4$drawTool = _this4.drawTool) === null || _this4$drawTool === void 0 || _this4$drawTool.add(d);
-      });
     }
     /**
      * 清理图层

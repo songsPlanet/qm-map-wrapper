@@ -1,6 +1,6 @@
-import type { TMapLayerSetting } from './typings/TLayerOptions'
+import type { TLayerSettingOptions, TMapLayerSetting } from './typings/TLayerOptions'
 import LayerGroupWrapper from './layer/LayerGroupWrapper'
-import type {StyleFunction, Expression } from 'mapbox-gl'
+import type { StyleFunction, Expression } from 'mapbox-gl'
 import type { TMapOptions } from './typings/TMapOptions'
 import { Feature, FeatureCollection } from 'geojson'
 import LayerWrapper from './layer/LayerWrapper'
@@ -92,12 +92,7 @@ class MapWrapper extends Map {
   load(mapLayerSetting: TMapLayerSetting) {
     this._mapLayerSetting = mapLayerSetting
     mapLayerSetting.forEach((layerOption) => {
-      let lyrWrapper
-      if ('layers' in layerOption) {
-        lyrWrapper = new LayerGroupWrapper(layerOption)
-      } else {
-        lyrWrapper = new LayerWrapper(layerOption)
-      }
+      const lyrWrapper = this.defineLayerWrapper(layerOption)
       this.addLayerWrapper(lyrWrapper)
       this._layers.push(lyrWrapper)
     })
@@ -120,6 +115,8 @@ class MapWrapper extends Map {
     return undefined
   }
 
+  
+
   addLayerWrapper(layer: LayerWrapper | LayerGroupWrapper, beforeId?: string) {
     layer.onAdd(this, beforeId)
     // 图层变化事件
@@ -132,25 +129,34 @@ class MapWrapper extends Map {
     this.fire(MapEvent.MAPLAYERCHANGED, { map: this, layer: layer })
   }
 
+  defineLayerWrapper(layerOption: TLayerSettingOptions) {
+    let lyrWrapper;
+    if ('layers' in layerOption) {
+      lyrWrapper = new LayerGroupWrapper(layerOption);
+    } else {
+      lyrWrapper = new LayerWrapper(layerOption);
+    }
+    return lyrWrapper
+  }
+
   /**
    * 添加临时图层-和图层关联
    */
-  addTemporaryWrapper(mapLayerSettting: TMapLayerSetting) {
+  addTemporaryWrapper(mapLayerSettting: TMapLayerSetting, beforeId?: string) {
     mapLayerSettting.forEach((layerOption) => {
-      let lyrWrapper
-      if ('layers' in layerOption) {
-        lyrWrapper = new LayerGroupWrapper(layerOption)
-      } else {
-        lyrWrapper = new LayerWrapper(layerOption)
+      const existingLayer = this.getLayerWrapper(this.layers, layerOption.id);
+      if (existingLayer) {
+        this.removeLayerWrapper(existingLayer, true);
       }
-      const flag = this.getLayer(layerOption.id)
-      if (flag) {
-        // remove layer
-        this.removeLayer(layerOption.id)
-        this.removeSource(layerOption.id + '-ds')
-        this.layers.pop()
-      }
-      this.addLayerWrapper(lyrWrapper)
+      // const flag = this.getLayer(layerOption.id)
+      // if (flag) {
+      //   // remove layer
+      //   this.removeLayer(layerOption.id)
+      //   this.removeSource(layerOption.id + '-ds')
+      //   this.layers.pop()
+      // }
+      const lyrWrapper = this.defineLayerWrapper(layerOption)
+      this.addLayerWrapper(lyrWrapper, beforeId)
       this.layers.push(lyrWrapper)
     })
   }
@@ -216,7 +222,7 @@ class MapWrapper extends Map {
   }
 
   /**
-   * 要素注记
+   * 要素注记-文字
    * geo：目标要素geometry
    * id：指定id，区分与一般高亮要素
    * filter：标注过滤条件：如['concat','保单号:  ',['get', 'policyNo'],'\n','险种:  ',['get', 'seedCodeNames']]
@@ -238,7 +244,6 @@ class MapWrapper extends Map {
     this.addLayer({
       id: lyrId,
       type: 'symbol',
-      minzoom: 10,
       layout: {
         'text-size': 14,
         'text-field': filter ?? 'test',
@@ -297,78 +302,16 @@ class MapWrapper extends Map {
 
 
   /**
-   * 矢量切片服务
-   * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
-   * @param sourceName：数据源名称
-   * @param id：唯一编码
-   * @param paint ：可选样式
-   * @param beofreId
-   */
-  selectLineFeatureByServer(
-    tiles: string[],
-    sourceName: string,
-    id: string,
-    paint?: any,
-    beofreId?: string,
-  ) {
-    const dsId = `${id}-ds`
-    const lyrId = `${id}-lyr`
-    this.clearFeatureById(dsId, lyrId);
-    this.addSource(dsId, {
-      type: 'vector',
-      maxzoom: 14,
-      tiles,
-    });
-
-    this.addLayer(
-      {
-        id: lyrId,
-        type: 'line',
-        paint: {
-          'line-color': '#00ffff',
-          'line-width': 2,
-          ...paint,
-        },
-        source: dsId,
-        'source-layer': `public.${sourceName}`,
-      },
-      beofreId,
-    );
-  }
-
-  /**
- * 矢量切片服务
- * @param tiles：目标切片地址[`http://ip/selectserver/${sourceName}/{z}/{x}/{y}?`]
- * @param sourceName：数据源名称
- * @param id：唯一编码
- * @param paint ：可选样式
- * @param beofreId
+ * 添加绘制图层
+ *  @param data feature[]
  */
-  selectFillFeatureByServer(
-    tiles: string[],
-    sourceName: string,
-    id: string,
-    paint?: any,
-    beofreId?: string,
-  ) {
-    const dsId = `${id}-ds`
-    const lyrId = `${id}-lyr`
-    this.clearFeatureById(dsId, lyrId);
-    this.addSource(dsId, {
-      type: 'vector',
-      minzoom: 0,
-      maxzoom: 12,
-      tiles,
+  addDrawFeature(data: Feature[]) {
+    if (data.length === 0) return;
+    const modifyPolygon: any[] = GISToolHelper.modifyMultiPolygon(data);
+    modifyPolygon.forEach((d: any) => {
+      this.drawTool?.add(d);
     });
-    this.addLayer({
-      id: lyrId,
-      type: 'fill',
-      paint,
-      source: dsId,
-      'source-layer': `public.${sourceName}`,
-    }, beofreId);
   }
-
 
   addDotIcon = (point: []) => {
     this.clearSelect('red-dot')
@@ -450,17 +393,7 @@ class MapWrapper extends Map {
   }
 
 
-  /**
- * 添加绘制图层
- *  @param data feature[]
- */
-  addDrawFeature(data: Feature[]) {
-    if (data.length === 0) return;
-    const modifyPolygon: any[] = GISToolHelper.modifyMultiPolygon(data);
-    modifyPolygon.forEach((d: any) => {
-      this.drawTool?.add(d);
-    });
-  }
+
 
   /**
    * 清理图层
@@ -583,9 +516,9 @@ class MapWrapper extends Map {
     this.remove()
   }
 
- 
 
- 
+
+
 }
 
 export default MapWrapper

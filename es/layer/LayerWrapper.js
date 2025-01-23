@@ -39,7 +39,8 @@ var LayerWrapper = /*#__PURE__*/function (_BaseLayer) {
       var _this$_options = this._options,
         id = _this$_options.id,
         source = _this$_options.source,
-        canUpdate = _this$_options.canUpdate;
+        canUpdate = _this$_options.canUpdate,
+        dataResolver = _this$_options.dataResolver;
       var sourceId = this._options.id + '-ds';
       // 直接传id
       if (typeof source === 'string') {
@@ -56,6 +57,9 @@ var LayerWrapper = /*#__PURE__*/function (_BaseLayer) {
       // add layer
       var oldLayer = map.getLayer(id);
       var newSource = map.getSource(sourceId);
+      if (dataResolver) {
+        dataResolver.load(newSource);
+      }
       if (!oldLayer && newSource) {
         var layerOptions = _objectSpread(_objectSpread({}, this._options), {}, {
           source: sourceId
