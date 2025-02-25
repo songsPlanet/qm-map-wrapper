@@ -3,11 +3,11 @@ import { LngLatBounds } from 'mapbox-gl';
 
 class GISToolHelper {
   /**
-* 浅比较
-* @param obj1
-* @param obj2
-* @returns ture or false
-*/
+  * 浅比较
+  * @param obj1
+  * @param obj2
+  * @returns ture or false
+  */
   public static shollawEqual = (obj1: any, obj2: any): boolean => {
     if (obj1 === obj2) {
       return true;
@@ -376,22 +376,6 @@ class GISToolHelper {
         },
       ],
     };
-  };
-
-  /**
-   *十进制转度分秒
-   * @returns {{}}
-  */
-  public static getTdtSubDomain = (tianditukey: string) => {
-    // 创建一个随机选择子域名的函数
-    const subDomains = ['t1', 't2', 't3', 't4', 't5', 't6', 't7'];
-    const index = Math.floor(Math.random() * subDomains.length);
-    const sub = subDomains[index]
-    const tiles: any = {
-      imgw: `http://${sub}.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${tianditukey}`,
-      ciaw: `http://${sub}.tianditu.gov.cn/cia_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${tianditukey}`
-    }
-    return tiles
   };
 
 

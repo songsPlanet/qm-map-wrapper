@@ -1,11 +1,11 @@
 import { LngLatBounds } from 'mapbox-gl';
 declare class GISToolHelper {
     /**
-  * 浅比较
-  * @param obj1
-  * @param obj2
-  * @returns ture or false
-  */
+    * 浅比较
+    * @param obj1
+    * @param obj2
+    * @returns ture or false
+    */
     static shollawEqual: (obj1: any, obj2: any) => boolean;
     /**
      * 深比较
@@ -144,10 +144,5 @@ declare class GISToolHelper {
             properties: any;
         }[];
     };
-    /**
-     *十进制转度分秒
-     * @returns {{}}
-    */
-    static getTdtSubDomain: (tianditukey: string) => any;
 }
 export default GISToolHelper;

@@ -115,7 +115,7 @@ class MapWrapper extends Map {
     return undefined
   }
 
-  
+
 
   addLayerWrapper(layer: LayerWrapper | LayerGroupWrapper, beforeId?: string) {
     layer.onAdd(this, beforeId)
@@ -148,13 +148,6 @@ class MapWrapper extends Map {
       if (existingLayer) {
         this.removeLayerWrapper(existingLayer, true);
       }
-      // const flag = this.getLayer(layerOption.id)
-      // if (flag) {
-      //   // remove layer
-      //   this.removeLayer(layerOption.id)
-      //   this.removeSource(layerOption.id + '-ds')
-      //   this.layers.pop()
-      // }
       const lyrWrapper = this.defineLayerWrapper(layerOption)
       this.addLayerWrapper(lyrWrapper, beforeId)
       this.layers.push(lyrWrapper)
