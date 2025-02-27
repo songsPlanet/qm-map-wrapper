@@ -18,12 +18,14 @@ import './index.css';
 
 var PolylineMeasure = /*#__PURE__*/function () {
   function PolylineMeasure(map) {
-    var _this = this;
+    var _this = this,
+      _window$scale;
     _classCallCheck(this, PolylineMeasure);
     _defineProperty(this, "uuid", void 0);
     _defineProperty(this, "map", void 0);
     _defineProperty(this, "isMeasure", void 0);
     _defineProperty(this, "ele", void 0);
+    _defineProperty(this, "scale", void 0);
     _defineProperty(this, "tooltip", void 0);
     _defineProperty(this, "points", []);
     _defineProperty(this, "markers", []);
@@ -83,7 +85,8 @@ var PolylineMeasure = /*#__PURE__*/function () {
     });
     _defineProperty(this, "mapClickHandle", function (e) {
       if (_this.isMeasure) {
-        var coords = [e.lngLat.lng, e.lngLat.lat];
+        var coords = _mapInstanceProperty(_this).unproject([e.point.x / _this.scale, e.point.y / _this.scale]);
+        coords = [coords.lng, coords.lat];
         _this.addMeasureRes(coords);
         _this.addPoint(coords);
         _this.points.push(coords);
@@ -92,7 +95,8 @@ var PolylineMeasure = /*#__PURE__*/function () {
     _defineProperty(this, "mapMouseMoveHandle", function (e) {
       var polylineMovelinesSourceId = 'polylineMovelinesSource' + _this.uuid;
       if (_this.isMeasure) {
-        var coords = [e.lngLat.lng, e.lngLat.lat];
+        var coords = _mapInstanceProperty(_this).unproject([e.point.x / _this.scale, e.point.y / _this.scale]);
+        coords = [coords.lng, coords.lat];
         if (_this.jsonPoint.features.length > 0) {
           var prev = _this.jsonPoint.features[_this.jsonPoint.features.length - 1];
           var json = {
@@ -112,7 +116,8 @@ var PolylineMeasure = /*#__PURE__*/function () {
     });
     _defineProperty(this, "mapDbclickHandle", function (e) {
       if (_this.isMeasure) {
-        var coords = [e.lngLat.lng, e.lngLat.lat];
+        var coords = _mapInstanceProperty(_this).unproject([e.point.x / _this.scale, e.point.y / _this.scale]);
+        coords = [coords.lng, coords.lat];
         _this.addPoint(coords);
         _this.isMeasure = false;
         _mapInstanceProperty(_this).getCanvas().style.cursor = '';
@@ -138,6 +143,7 @@ var PolylineMeasure = /*#__PURE__*/function () {
     this.uuid = this.generateId();
     this.map = map;
     this.isMeasure = false;
+    this.scale = (_window$scale = window.scale) !== null && _window$scale !== void 0 ? _window$scale : 1;
     var _polylinePointsSourceId = 'polylinePointsSource' + this.uuid;
     var polylinePointsLayerId = 'polylinePointsLayer' + this.uuid;
     var _polylineLinesSourceId = 'polylineLines' + this.uuid;

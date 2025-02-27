@@ -6,6 +6,7 @@ declare class PolylineMeasure {
     map: MapWrapper;
     isMeasure: boolean;
     ele: any;
+    scale: any;
     tooltip: any;
     points: any[];
     markers: Marker[];

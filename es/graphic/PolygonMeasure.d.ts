@@ -6,6 +6,7 @@ declare class PolygonMeasure {
     map: MapWrapper;
     isMeasure: boolean;
     ele: any;
+    scale: any;
     ifMu: boolean;
     tooltip: any;
     points: any[];

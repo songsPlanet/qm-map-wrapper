@@ -9,6 +9,7 @@ class PolygonMeasure {
   map: MapWrapper;
   isMeasure: boolean;
   ele: any;
+  scale: any;
   ifMu: boolean;// 单位默认为m^2,值为true的时候，单位为亩
   tooltip: any;
   points: any[] = [];
@@ -27,6 +28,7 @@ class PolygonMeasure {
     this.map = map;
     this.ifMu = ifMu ? true : false
     this.isMeasure = false;
+    this.scale = (window as any).scale ?? 1;
     let polygonPointsSourceId = 'polygonPointsSource' + this.uuid;
     let polygonPointsLayerId = 'polygonPointsLayer' + this.uuid;
     let polygonLinesSourceId = 'polygonLines' + this.uuid;
@@ -124,7 +126,8 @@ class PolygonMeasure {
 
   mapClickHandle = (e: any) => {
     if (this.isMeasure) {
-      let coords = [e.lngLat.lng, e.lngLat.lat];
+      let coords: any = this.map.unproject([e.point.x / this.scale, e.point.y / this.scale]);
+      coords = [coords.lng, coords.lat];
       this.addPoint(coords);
       this.points.push(coords);
     }
@@ -133,7 +136,8 @@ class PolygonMeasure {
   mapMouseMoveHandle = (e: any) => {
     if (this.isMeasure) {
       let polygonLinesSourceId = 'polygonLines' + this.uuid;
-      let coords: any = [e.lngLat.lng, e.lngLat.lat];
+      let coords: any = this.map.unproject([e.point.x / this.scale, e.point.y / this.scale]);
+      coords = [coords.lng, coords.lat];
       let len = this.jsonPoint.features.length;
       if (len === 0) {
         this.ele.innerHTML = '点击地图开始测量';
@@ -158,7 +162,8 @@ class PolygonMeasure {
 
   mapDbclickHandle = (e: any) => {
     if (this.isMeasure) {
-      let coords: any = [e.lngLat.lng, e.lngLat.lat];
+      let coords: any = this.map.unproject([e.point.x / this.scale, e.point.y / this.scale]);
+      coords = [coords.lng, coords.lat];
       this.points.push(coords);
       this.isMeasure = false;
       this.ele.innerHTML = this.getArea(coords);

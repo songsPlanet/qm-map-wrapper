@@ -18,12 +18,14 @@ import './index.css';
 
 var PolygonMeasure = /*#__PURE__*/function () {
   function PolygonMeasure(map, ifMu) {
-    var _this = this;
+    var _this = this,
+      _window$scale;
     _classCallCheck(this, PolygonMeasure);
     _defineProperty(this, "uuid", void 0);
     _defineProperty(this, "map", void 0);
     _defineProperty(this, "isMeasure", void 0);
     _defineProperty(this, "ele", void 0);
+    _defineProperty(this, "scale", void 0);
     _defineProperty(this, "ifMu", void 0);
     // 单位默认为m^2,值为true的时候，单位为亩
     _defineProperty(this, "tooltip", void 0);
@@ -67,7 +69,8 @@ var PolygonMeasure = /*#__PURE__*/function () {
     });
     _defineProperty(this, "mapClickHandle", function (e) {
       if (_this.isMeasure) {
-        var coords = [e.lngLat.lng, e.lngLat.lat];
+        var coords = _mapInstanceProperty(_this).unproject([e.point.x / _this.scale, e.point.y / _this.scale]);
+        coords = [coords.lng, coords.lat];
         _this.addPoint(coords);
         _this.points.push(coords);
       }
@@ -75,7 +78,8 @@ var PolygonMeasure = /*#__PURE__*/function () {
     _defineProperty(this, "mapMouseMoveHandle", function (e) {
       if (_this.isMeasure) {
         var polygonLinesSourceId = 'polygonLines' + _this.uuid;
-        var coords = [e.lngLat.lng, e.lngLat.lat];
+        var coords = _mapInstanceProperty(_this).unproject([e.point.x / _this.scale, e.point.y / _this.scale]);
+        coords = [coords.lng, coords.lat];
         var len = _this.jsonPoint.features.length;
         if (len === 0) {
           _this.ele.innerHTML = '点击地图开始测量';
@@ -100,7 +104,8 @@ var PolygonMeasure = /*#__PURE__*/function () {
     });
     _defineProperty(this, "mapDbclickHandle", function (e) {
       if (_this.isMeasure) {
-        var coords = [e.lngLat.lng, e.lngLat.lat];
+        var coords = _mapInstanceProperty(_this).unproject([e.point.x / _this.scale, e.point.y / _this.scale]);
+        coords = [coords.lng, coords.lat];
         _this.points.push(coords);
         _this.isMeasure = false;
         _this.ele.innerHTML = _this.getArea(coords);
@@ -125,6 +130,7 @@ var PolygonMeasure = /*#__PURE__*/function () {
     this.map = map;
     this.ifMu = ifMu ? true : false;
     this.isMeasure = false;
+    this.scale = (_window$scale = window.scale) !== null && _window$scale !== void 0 ? _window$scale : 1;
     var _polygonPointsSourceId = 'polygonPointsSource' + this.uuid;
     var polygonPointsLayerId = 'polygonPointsLayer' + this.uuid;
     var _polygonLinesSourceId = 'polygonLines' + this.uuid;

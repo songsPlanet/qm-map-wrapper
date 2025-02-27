@@ -8,6 +8,7 @@ class PolylineMeasure {
   map: MapWrapper;
   isMeasure: boolean;
   ele: any;
+  scale: any;
   tooltip: any;
   points: any[] = [];
   markers: Marker[] = [];
@@ -23,6 +24,7 @@ class PolylineMeasure {
     this.uuid = this.generateId();
     this.map = map;
     this.isMeasure = false;
+    this.scale = (window as any).scale ?? 1;
     let polylinePointsSourceId = 'polylinePointsSource' + this.uuid;
     let polylinePointsLayerId = 'polylinePointsLayer' + this.uuid;
     let polylineLinesSourceId = 'polylineLines' + this.uuid;
@@ -141,7 +143,8 @@ class PolylineMeasure {
 
   mapClickHandle = (e: any) => {
     if (this.isMeasure) {
-      let coords = [e.lngLat.lng, e.lngLat.lat];
+      let coords: any = this.map.unproject([e.point.x / this.scale, e.point.y / this.scale]);
+      coords = [coords.lng, coords.lat];
       this.addMeasureRes(coords);
       this.addPoint(coords);
       this.points.push(coords);
@@ -151,7 +154,8 @@ class PolylineMeasure {
   mapMouseMoveHandle = (e: any) => {
     let polylineMovelinesSourceId = 'polylineMovelinesSource' + this.uuid;
     if (this.isMeasure) {
-      let coords = [e.lngLat.lng, e.lngLat.lat];
+      let coords: any = this.map.unproject([e.point.x / this.scale, e.point.y / this.scale]);
+      coords = [coords.lng, coords.lat];
       if (this.jsonPoint.features.length > 0) {
         let prev = this.jsonPoint.features[this.jsonPoint.features.length - 1];
         let json = {
@@ -172,7 +176,8 @@ class PolylineMeasure {
 
   mapDbclickHandle = (e: any) => {
     if (this.isMeasure) {
-      let coords: any = [e.lngLat.lng, e.lngLat.lat];
+      let coords: any = this.map.unproject([e.point.x / this.scale, e.point.y / this.scale]);
+      coords = [coords.lng, coords.lat];
       this.addPoint(coords);
       this.isMeasure = false;
       this.map.getCanvas().style.cursor = '';
